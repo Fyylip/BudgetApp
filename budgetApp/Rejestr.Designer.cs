@@ -92,23 +92,28 @@
             // txtPassword
             // 
             txtPassword.Anchor = AnchorStyles.None;
+            txtPassword.BackColor = Color.FromArgb(24, 15, 47);
+            txtPassword.BorderStyle = BorderStyle.None;
             txtPassword.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold);
             txtPassword.ForeColor = SystemColors.ActiveCaptionText;
             txtPassword.Location = new Point(319, 212);
             txtPassword.Name = "txtPassword";
             txtPassword.PasswordChar = '*';
-            txtPassword.Size = new Size(167, 33);
+            txtPassword.PlaceholderText = "Password";
+            txtPassword.Size = new Size(167, 26);
             txtPassword.TabIndex = 11;
             // 
             // txtEmail
             // 
             txtEmail.Anchor = AnchorStyles.None;
-            txtEmail.BackColor = Color.White;
+            txtEmail.BackColor = Color.FromArgb(24, 15, 47);
+            txtEmail.BorderStyle = BorderStyle.None;
             txtEmail.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             txtEmail.ForeColor = SystemColors.ActiveCaptionText;
             txtEmail.Location = new Point(319, 150);
             txtEmail.Name = "txtEmail";
-            txtEmail.Size = new Size(168, 33);
+            txtEmail.PlaceholderText = "Email";
+            txtEmail.Size = new Size(168, 26);
             txtEmail.TabIndex = 10;
             // 
             // button2
@@ -156,19 +161,22 @@
             // txtPassword2
             // 
             txtPassword2.Anchor = AnchorStyles.None;
+            txtPassword2.BackColor = Color.FromArgb(24, 15, 47);
+            txtPassword2.BorderStyle = BorderStyle.None;
             txtPassword2.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold);
             txtPassword2.ForeColor = SystemColors.ActiveCaptionText;
             txtPassword2.Location = new Point(320, 267);
             txtPassword2.Name = "txtPassword2";
             txtPassword2.PasswordChar = '*';
-            txtPassword2.Size = new Size(167, 33);
+            txtPassword2.PlaceholderText = "confirm password";
+            txtPassword2.Size = new Size(167, 26);
             txtPassword2.TabIndex = 16;
             // 
             // Rejestr
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(18, 11, 34);
+            BackColor = Color.FromArgb(24, 15, 47);
             ClientSize = new Size(800, 450);
             Controls.Add(label4);
             Controls.Add(txtPassword2);

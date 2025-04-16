@@ -68,33 +68,34 @@
             button2.TabIndex = 1;
             button2.Text = "Clear";
             button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            //button2.Click += button2_Click;
             // 
             // txtUserName
             // 
             txtUserName.Anchor = AnchorStyles.None;
-            txtUserName.BackColor = Color.White;
+            txtUserName.BackColor = Color.FromArgb(24, 15, 47);
+            txtUserName.BorderStyle = BorderStyle.None;
             txtUserName.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             txtUserName.ForeColor = SystemColors.ActiveCaptionText;
             txtUserName.Location = new Point(374, 147);
             txtUserName.Name = "txtUserName";
-            txtUserName.Size = new Size(168, 33);
+            txtUserName.PlaceholderText = "Login";
+            txtUserName.Size = new Size(168, 26);
             txtUserName.TabIndex = 2;
-            txtUserName.Enter += txtUserName_Enter;
-            txtUserName.Leave += txtUserName_Leave;
             // 
             // txtPassword
             // 
             txtPassword.Anchor = AnchorStyles.None;
+            txtPassword.BackColor = Color.FromArgb(24, 15, 47);
+            txtPassword.BorderStyle = BorderStyle.None;
             txtPassword.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold);
             txtPassword.ForeColor = SystemColors.ActiveCaptionText;
             txtPassword.Location = new Point(375, 195);
             txtPassword.Name = "txtPassword";
             txtPassword.PasswordChar = '*';
-            txtPassword.Size = new Size(167, 33);
+            txtPassword.PlaceholderText = "Password";
+            txtPassword.Size = new Size(167, 26);
             txtPassword.TabIndex = 3;
-            txtPassword.Enter += txtPassword_Enter;
-            txtPassword.Leave += txtPassword_Leave;
             // 
             // label1
             // 
@@ -166,7 +167,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(18, 11, 34);
+            BackColor = Color.FromArgb(24, 15, 47);
             ClientSize = new Size(799, 465);
             Controls.Add(button1);
             Controls.Add(label3);
@@ -179,7 +180,6 @@
             Controls.Add(btnLogin);
             Name = "LoginForm";
             Text = "Form1";
-            Load += LoginForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }

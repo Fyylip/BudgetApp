@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("budgetApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+355b1aac4f0071597902ff886d43090621c91a33")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+31770f965cddd16297431d1d35d7c54ab4cac450")]
 [assembly: System.Reflection.AssemblyProductAttribute("budgetApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("budgetApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

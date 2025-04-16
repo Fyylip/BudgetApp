@@ -4,7 +4,9 @@ using System.Drawing;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using budgetApp;
 using Microsoft.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace LoginSystem
 {
@@ -40,8 +42,11 @@ namespace LoginSystem
                 int count = (int)cmd.ExecuteScalar();
                 if (count > 0)
                 {
-                    MessageBox.Show("Zalogowano pomyœlnie!", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    // Mo¿esz otworzyæ nowe okno g³ówne aplikacji tutaj
+                    //MessageBox.Show("Zalogowano pomyœlnie!", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MainForm mainForm = new MainForm(email);
+                    mainForm.Show();
+                    this.Hide();
+
                 }
                 else
                 {
@@ -71,59 +76,15 @@ namespace LoginSystem
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            txtUserName.Text = "Login";
-            txtPassword.Text = "Password";
-        }
+        //private void button2_Click(object sender, EventArgs e)
+        //{
+        //    txtUserName.Text = "Login";
+        //    txtPassword.Text = "Password";
+        //}
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             txtPassword.PasswordChar = checkBox1.Checked ? '\0' : '*';
-        }
-
-        private void LoginForm_Load(object sender, EventArgs e)
-        {
-            txtUserName.BorderStyle = BorderStyle.None;
-            txtUserName.BackColor = this.BackColor;
-            txtUserName.ForeColor = Color.Gray;
-            txtUserName.Text = "Login";
-
-            txtPassword.BorderStyle = BorderStyle.None;
-            txtPassword.BackColor = this.BackColor;
-            txtPassword.ForeColor = Color.Gray;
-            txtPassword.PasswordChar = '\0';
-            txtPassword.Text = "Password";
-
-            btnLogin.BackColor = Color.Transparent;
-        }
-
-        private void txtUserName_Enter(object sender, EventArgs e)
-        {
-            txtUserName.Text = "";
-        }
-
-        private void txtPassword_Enter(object sender, EventArgs e)
-        {
-            txtPassword.PasswordChar = '*';
-            txtPassword.Text = "";
-        }
-
-        private void txtUserName_Leave(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtUserName.Text))
-            {
-                txtUserName.Text = "Login";
-            }
-        }
-
-        private void txtPassword_Leave(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtPassword.Text))
-            {
-                txtPassword.PasswordChar = '\0';
-                txtPassword.Text = "Password";
-            }
         }
 
         private void button1_Click(object sender, EventArgs e)
