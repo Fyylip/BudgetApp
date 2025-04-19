@@ -9,13 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WinForms" Version="2.0.0-rc5.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
+    <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Login.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Login.cs" />
     <Compile Update="Rejestr.cs">
       <SubType>Form</SubType>
     </Compile>
