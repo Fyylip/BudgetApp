@@ -1,8 +1,10 @@
 ﻿using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Extensions;
+using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.VisualElements;
 using LiveChartsCore.SkiaSharpView.WinForms;
+using SkiaSharp;
 using System.Collections.Generic;
 
 namespace ViewModelsSamples.Pies.Basic;
@@ -26,6 +28,7 @@ public class PieChartViewModel
     {
         Text = "My chart title",
         TextSize = 25,
-        Padding = new LiveChartsCore.Drawing.Padding(15)
+        Padding = new LiveChartsCore.Drawing.Padding(15),
+        Paint = new SolidColorPaint(SKColors.White)
     };
 }

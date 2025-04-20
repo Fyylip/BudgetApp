@@ -16,6 +16,7 @@ public class BarChart
         {
             Series = new ISeries[]
             {
+
                 new RowSeries<int>
                 {
                     Values = new int[] { 8 },

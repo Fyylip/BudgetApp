@@ -34,19 +34,19 @@ namespace LoginSystem
             try
             {
                 con.Open();
-                string query = "SELECT COUNT(*) FROM Users WHERE userName=@username AND pasword=@password";
+                string query = "SELECT id FROM Users WHERE userName=@username AND pasword=@password";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@username", email);
                 cmd.Parameters.AddWithValue("@password", hashedPassword);
 
-                int count = (int)cmd.ExecuteScalar();
-                if (count > 0)
+                object result = cmd.ExecuteScalar();
+                if (result != null)
                 {
-                    //MessageBox.Show("Zalogowano pomyœlnie!", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    MainForm mainForm = new MainForm(email);
+                    int userId = Convert.ToInt32(result);
+
+                    MainForm mainForm = new MainForm(email, userId); // teraz przekazujesz te¿ userId
                     mainForm.Show();
                     this.Hide();
-
                 }
                 else
                 {

@@ -1,5 +1,6 @@
 ﻿using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.VisualElements;
 using LiveChartsCore.SkiaSharpView.WinForms;
 
 namespace budgetApp.Charts
