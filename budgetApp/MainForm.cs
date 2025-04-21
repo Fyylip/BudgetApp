@@ -38,6 +38,8 @@ namespace budgetApp
 
         private void InitializeCharts()
         {
+            // Pobierz dane dla wykresu ko³owego
+var (amounts, categories) = GetPieChartData();
             // Wykres liniowy
             lineChart = new LineChart().CreateLineChart();
             lineChart.Dock = DockStyle.Bottom;
@@ -52,7 +54,7 @@ namespace budgetApp
 
             // Wykres ko³owy
             var pieChartViewModel = new PieChartViewModel();
-            pieChart = pieChartViewModel.CreatePieChart();
+            pieChart = pieChartViewModel.CreatePieChart(amounts, categories);
             pieChart.Dock = DockStyle.Top;
             PieChartPanel.Controls.Add(pieChart);
             PieChartPanel.Resize += (s, e) => UpdateChartSize(pieChart, PieChartPanel);
@@ -61,6 +63,45 @@ namespace budgetApp
             UpdateChartSize(lineChart, LineChartPanel);
             UpdateChartSize(barChartControl, BarChartPanel);
             UpdateChartSize(pieChart, PieChartPanel);
+        }
+
+        private (List<decimal> amounts, List<string> categories) GetPieChartData()
+        {
+            List<string> categories = new List<string>();
+            List<decimal> amounts = new List<decimal>();
+            SqlConnection con = new SqlConnection("Data Source=DESKTOP-IM5HQGK\\SQLEXPRESS;Initial Catalog=LoginApp;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+
+            try
+            {
+                con.Open();
+
+                string query = "SELECT Amount, Category FROM PieChartData WHERE UserId = @UserId";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@UserId", _userId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    string categoryFromDb = reader["Category"]?.ToString() ?? "Brak kategorii";
+                    decimal amountFromDb = reader["Amount"] != DBNull.Value ? Convert.ToDecimal(reader["Amount"]) : 0;
+
+                    categories.Add(categoryFromDb);
+                    amounts.Add(amountFromDb);
+                }
+
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("B³¹d podczas pobierania danych dla wykresu ko³owego: " + ex.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            return (amounts, categories);
         }
 
         private void UpdateChartSize(Control chart, Panel panel)
@@ -98,6 +139,26 @@ namespace budgetApp
                 {
                     Total.Text = "Brak danych"; // Jeœli nie znaleziono rekordu
                 }
+
+                // Dane do legendy wykresu ko³owego 
+                string query2 = "SELECT Category, Amount FROM PieChartData WHERE UserId = @UserId";
+                SqlCommand cmd2 = new SqlCommand(query2, con);
+                cmd2.Parameters.AddWithValue("@UserId", _userId);
+
+                SqlDataReader reader = cmd2.ExecuteReader();
+                List<decimal> amounts = new List<decimal>();
+
+                while (reader.Read())
+                {
+                    string categoryFromDb = reader["Category"]?.ToString() ?? string.Empty; // Fix for CS8600
+                    decimal amountFromDb = reader["Amount"] != DBNull.Value ? Convert.ToDecimal(reader["Amount"]) : 0;
+
+                    LegendData.Text += categoryFromDb + " ";
+
+                }
+
+
+                reader.Close();
             }
             catch (Exception ex)
             {
@@ -212,8 +273,13 @@ namespace budgetApp
             }
         }
 
-
-
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // Pass the required 'userId' parameter to the AddPieChart constructor
+            AddPieChart addPieChart = new AddPieChart(_userId);
+            addPieChart.Show();
+            this.Hide();
+        }
     }
 }
 

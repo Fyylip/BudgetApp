@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using budgetApp.DataBase;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic.ApplicationServices;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
@@ -9,58 +10,97 @@ namespace budgetApp
     public partial class AddPieChart : Form
     {
         private int _userId;
+        private DatabaseHelper _dbHelper;
 
         public AddPieChart(int userId)
         {
             InitializeComponent();
             _userId = userId;
-
+            _dbHelper = new DatabaseHelper();
         }
 
-        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        private string GetSelectedCategory()
         {
-            if (!char.IsControl(e.KeyChar) &&
-                !char.IsDigit(e.KeyChar) &&
-            (e.KeyChar != ',')) // przecinek dla dziesiętnych
-            {
-                e.Handled = true;
-            }
-
-            // Tylko jeden przecinek
-            if (e.KeyChar == ',' && (sender as TextBox).Text.Contains(","))
-            {
-                e.Handled = true;
-            }
+            if (radioFood.Checked)
+                return "Food";
+            else if (radioMustHave.Checked)
+                return "Must have";
+            else if (radioPleasures.Checked)
+                return "Pleasures";
+            else
+                return string.Empty; // Zwracamy pusty ciąg, gdy żadna kategoria nie jest wybrana
         }
 
-        private void AddPieChart_Load(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            SqlConnection con = new SqlConnection("Data Source=DESKTOP-IM5HQGK\\SQLEXPRESS;Initial Catalog=LoginApp;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+            string category = GetSelectedCategory();
+            if (string.IsNullOrWhiteSpace(category))
+            {
+                MessageBox.Show("Wybierz kategorię.");
+                return;
+            }
+
+            if (!decimal.TryParse(AmountInput.Text.Replace(',', '.'), out decimal amount))
+            {
+                MessageBox.Show("Nieprawidłowa kwota.");
+                return;
+            }
+
             try
             {
-                con.Open();
-                string query = "SELECT Value FROM PieChart WHERE UserId = @UserId";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@UserId", _userId); // <<< Ustawiamy userId
-
-                object result = cmd.ExecuteScalar();
-                if (result != null)
+                _dbHelper.UpdateTotalRecord(_userId, amount); // Moved here to ensure 'amount' is defined
+                if (_dbHelper.RecordExists(_userId, category))
                 {
-                    decimal value = Convert.ToDecimal(result);
+                    // Jeśli rekord istnieje, zaktualizuj go
+                    _dbHelper.UpdateRecord(_userId, category, amount);
+                    MessageBox.Show("Kwota zaktualizowana w wykresie kołowym!");
                 }
                 else
                 {
+                    // Jeśli rekord nie istnieje, dodaj nowy
+                    _dbHelper.InsertRecord(_userId, category, amount);
+                    MessageBox.Show("Dane dodane do wykresu kołowego!");
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd: " + ex.Message);
             }
-            finally
-            {
-                con.Close();
-            }
         }
 
+        private void buttonEdit_Click(object sender, EventArgs e)
+        {
+            string category = GetSelectedCategory();
+            if (category == "Unknown")
+            {
+                MessageBox.Show("Wybierz kategorię do edycji.");
+                return;
+            }
+
+            if (!decimal.TryParse(AmountInput.Text.Replace(',', '.'), out decimal newAmount))
+            {
+                MessageBox.Show("Nieprawidłowa kwota.");
+                return;
+            }
+
+            try
+            {
+                if (_dbHelper.RecordExists(_userId, category))
+                {
+                    _dbHelper.UpdateRecord(_userId, category, newAmount);
+                    MessageBox.Show("Kwota została zaktualizowana.");
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Nie znaleziono wpisu dla tej kategorii.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd: " + ex.Message);
+            }
+        }
     }
+
 }

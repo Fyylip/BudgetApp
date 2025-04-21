@@ -1,6 +1,5 @@
 ﻿using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.Extensions;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.VisualElements;
 using LiveChartsCore.SkiaSharpView.WinForms;
@@ -11,24 +10,34 @@ namespace ViewModelsSamples.Pies.Basic;
 
 public class PieChartViewModel
 {
-    // Poprawione - zwracamy PieChart zamiast CartesianChart
-    public PieChart CreatePieChart()
+    public PieChart CreatePieChart(List<decimal> amounts, List<string> categories)
     {
+        var series = new List<PieSeries<decimal>>();
+
+        for (int i = 0; i < amounts.Count; i++)
+        {
+            var value = amounts[i];
+            var category = categories[i];
+
+            series.Add(new PieSeries<decimal>
+            {
+                Values = new[] { value },
+                ToolTipLabelFormatter = (chartPoint) =>
+                    $"{category}: {chartPoint.Coordinate.PrimaryValue} zł" // Use 'chartPoint.Coordinate.PrimaryValue' instead of 'chartPoint.PrimaryValue'
+            });
+        }
+
         return new PieChart
         {
-            Series = this.Series,
-            Title = this.Title
+            Series = series,
+            Title = new LabelVisual
+            {
+                Text = "Wydatki",
+                TextSize = 25,
+                Padding = new LiveChartsCore.Drawing.Padding(15),
+                Paint = new SolidColorPaint(SKColors.White)
+            }
         };
     }
-
-    public IEnumerable<ISeries> Series { get; set; } =
-        new[] { 2, 4, 1, 4, 3 }.AsPieSeries();
-
-    public LabelVisual Title { get; set; } = new LabelVisual
-    {
-        Text = "My chart title",
-        TextSize = 25,
-        Padding = new LiveChartsCore.Drawing.Padding(15),
-        Paint = new SolidColorPaint(SKColors.White)
-    };
 }
+

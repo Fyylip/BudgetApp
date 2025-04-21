@@ -49,12 +49,9 @@ namespace budgetApp
             panel5 = new Panel();
             label7 = new Label();
             PieChartPanel = new Panel();
+            button1 = new Button();
             panel2 = new Panel();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
-            label5 = new Label();
+            LegendData = new Label();
             panel1.SuspendLayout();
             LeftPanel.SuspendLayout();
             BarChartPanel.SuspendLayout();
@@ -298,6 +295,7 @@ namespace budgetApp
             // PieChartPanel
             // 
             PieChartPanel.BackColor = Color.FromArgb(35, 23, 74);
+            PieChartPanel.Controls.Add(button1);
             PieChartPanel.Controls.Add(panel2);
             PieChartPanel.Dock = DockStyle.Fill;
             PieChartPanel.Location = new Point(3, 3);
@@ -305,73 +303,34 @@ namespace budgetApp
             PieChartPanel.Size = new Size(238, 160);
             PieChartPanel.TabIndex = 6;
             // 
+            // button1
+            // 
+            button1.Location = new Point(160, 3);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 6;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // panel2
             // 
-            panel2.Controls.Add(label1);
-            panel2.Controls.Add(label2);
-            panel2.Controls.Add(label3);
-            panel2.Controls.Add(label4);
-            panel2.Controls.Add(label5);
+            panel2.Controls.Add(LegendData);
             panel2.Dock = DockStyle.Bottom;
             panel2.Location = new Point(0, 120);
             panel2.Name = "panel2";
             panel2.Size = new Size(238, 40);
             panel2.TabIndex = 5;
             // 
-            // label1
+            // LegendData
             // 
-            label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label1.AutoSize = true;
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(187, 15);
-            label1.Name = "label1";
-            label1.Size = new Size(38, 15);
-            label1.TabIndex = 0;
-            label1.Text = "label1";
-            // 
-            // label2
-            // 
-            label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label2.AutoSize = true;
-            label2.ForeColor = Color.White;
-            label2.Location = new Point(143, 15);
-            label2.Name = "label2";
-            label2.Size = new Size(38, 15);
-            label2.TabIndex = 1;
-            label2.Text = "label2";
-            // 
-            // label3
-            // 
-            label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label3.AutoSize = true;
-            label3.ForeColor = Color.White;
-            label3.Location = new Point(99, 15);
-            label3.Name = "label3";
-            label3.Size = new Size(38, 15);
-            label3.TabIndex = 2;
-            label3.Text = "label3";
-            // 
-            // label4
-            // 
-            label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label4.AutoSize = true;
-            label4.ForeColor = Color.White;
-            label4.Location = new Point(55, 15);
-            label4.Name = "label4";
-            label4.Size = new Size(38, 15);
-            label4.TabIndex = 3;
-            label4.Text = "label4";
-            // 
-            // label5
-            // 
-            label5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label5.AutoSize = true;
-            label5.ForeColor = Color.White;
-            label5.Location = new Point(11, 15);
-            label5.Name = "label5";
-            label5.Size = new Size(38, 15);
-            label5.TabIndex = 4;
-            label5.Text = "label5";
+            LegendData.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            LegendData.AutoSize = true;
+            LegendData.ForeColor = Color.White;
+            LegendData.Location = new Point(11, 15);
+            LegendData.Name = "LegendData";
+            LegendData.Size = new Size(0, 15);
+            LegendData.TabIndex = 4;
             // 
             // MainForm
             // 
@@ -412,7 +371,7 @@ namespace budgetApp
         private Panel panel3;
         private Panel PieChartPanel;
         private Label label1;
-        private Label label5;
+        private Label LegendData;
         private Label label4;
         private Label label3;
         private Label label2;
@@ -430,5 +389,6 @@ namespace budgetApp
         private Panel panel7;
         private Label Total;
         private Button AddMoney;
+        private Button button1;
     }
 }
