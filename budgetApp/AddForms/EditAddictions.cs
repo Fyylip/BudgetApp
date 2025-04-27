@@ -40,6 +40,7 @@ namespace budgetApp
 
             _dbHelper.UpdateAddictionAmount(_userId, addictionName, amount);
             MessageBox.Show("Kwota została dodana!");
+            _dbHelper.UpdateTotalRecord(_userId, amount);
             this.Close();
         }
     }

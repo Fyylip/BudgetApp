@@ -13,6 +13,7 @@ using System.Data.SqlClient;
 using budgetApp.DataBase;
 using System.Windows.Forms.DataVisualization.Charting;
 using Microsoft.VisualBasic.ApplicationServices;
+using System.Drawing;
 
 
 namespace budgetApp
@@ -54,7 +55,7 @@ namespace budgetApp
         private void InitializeCharts()
         {
             // Pobierz dane dla wykresu ko³owego
-            var (amounts, categories) = GetPieChartData();
+            var (amounts, categories) = _dbHelper.GetPieChartData(_userId); // Pass the required 'userId' parameter
 
             // Wykres liniowy
             lineChart = new LineChart(_dbHelper).CreateLineChart(_userId); // Przekazanie _userId
@@ -98,43 +99,19 @@ namespace budgetApp
 
         private BarChart barChart;
 
-        private (List<decimal> amounts, List<string> categories) GetPieChartData()
+        private void LoadPieChartData()
         {
-            List<string> categories = new List<string>();
-            List<decimal> amounts = new List<decimal>();
-            SqlConnection con = new SqlConnection("Data Source=DESKTOP-IM5HQGK\\SQLEXPRESS;Initial Catalog=LoginApp;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+            DatabaseHelper dbHelper = new DatabaseHelper();
 
-            try
+            // Przekazujemy userId, zak³adaj¹c, ¿e masz tê zmienn¹ w MainForm
+            var (amounts, categories) = dbHelper.GetPieChartData(_userId);
+
+            // Przyk³ad: U¿ycie danych do wyœwietlenia wykresu
+            // Mo¿esz tutaj przypisaæ te dane do wykresu ko³owego
+            for (int i = 0; i < categories.Count; i++)
             {
-                con.Open();
-
-                string query = "SELECT Amount, Category FROM PieChartData WHERE UserId = @UserId";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@UserId", _userId);
-
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    string categoryFromDb = reader["Category"]?.ToString() ?? "Brak kategorii";
-                    decimal amountFromDb = reader["Amount"] != DBNull.Value ? Convert.ToDecimal(reader["Amount"]) : 0;
-
-                    categories.Add(categoryFromDb);
-                    amounts.Add(amountFromDb);
-                }
-
-                reader.Close();
+                Console.WriteLine($"Kategoria: {categories[i]}, Kwota: {amounts[i]}");
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("B³¹d podczas pobierania danych dla wykresu ko³owego: " + ex.Message);
-            }
-            finally
-            {
-                con.Close();
-            }
-
-            return (amounts, categories);
         }
 
         private void UpdateChartSize(Control chart, Panel panel)
@@ -143,6 +120,21 @@ namespace budgetApp
 
             chart.Height = (int)(panel.Height * 0.8);
             chart.Width = (int)(panel.Width * 0.95);
+        }
+
+        public void LoadTotalValue()
+        {
+            DatabaseHelper dbHelper = new DatabaseHelper();
+            decimal totalValue = dbHelper.GetTotalValue(_userId, "Wykres");
+
+            if (totalValue != 0)
+            {
+                Total.Text = $"{totalValue}";
+            }
+            else
+            {
+                Total.Text = "Brak danych";
+            }
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -154,23 +146,7 @@ namespace budgetApp
             {
                 con.Open();
 
-                string query = "SELECT Value FROM Total WHERE UserId = @UserId AND Label = @Label";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@UserId", _userId);
-                cmd.Parameters.AddWithValue("@Label", "Wykres");
-
-                var result = cmd.ExecuteScalar();
-
-                if (result != null)
-                {
-                    decimal totalValue = (decimal)result;
-                    Total.Text = $"{totalValue}";
-                    Application.DoEvents(); // Umo¿liwia aktualizacjê UI
-                }
-                else
-                {
-                    Total.Text = "Brak danych";
-                }
+                LoadTotalValue();
 
                 string query2 = "SELECT Category, Amount FROM PieChartData WHERE UserId = @UserId";
                 SqlCommand cmd2 = new SqlCommand(query2, con);
@@ -304,6 +280,7 @@ namespace budgetApp
         {
             // Pass the required 'userId' parameter to the AddPieChart constructor
             AddPieChart addPieChart = new AddPieChart(_userId);
+            addPieChart.FormClosed += (s, args) => InitializeCharts(); // Odœwie¿enie wykresu po zamkniêciu okna
             addPieChart.Show();
         }
 
@@ -317,6 +294,7 @@ namespace budgetApp
         private void AddExpense_Click(object sender, EventArgs e)
         {
             AddExpense addExpenseForm = new AddExpense(_userId);
+            addExpenseForm.FormClosed += (s, args) => InitializeCharts(); // Odœwie¿enie wykresu po zamkniêciu okna
             addExpenseForm.Show();
         }
 
@@ -334,9 +312,11 @@ namespace budgetApp
             }
         }
 
+
         private void button2_Click(object sender, EventArgs e)
         {
             EditAddictions editAddictionsForm = new EditAddictions(_dbHelper, _userId);
+            editAddictionsForm.FormClosed += (s, args) => InitializeCharts(); // Odœwie¿enie danych po zamkniêciu okna
             editAddictionsForm.Show();
         }
     }

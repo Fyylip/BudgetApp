@@ -40,6 +40,7 @@ namespace budgetApp
             label6 = new Label();
             panel3 = new Panel();
             panel7 = new Panel();
+            button2 = new Button();
             AddExpense = new Button();
             Addictions = new Label();
             panel6 = new Panel();
@@ -51,7 +52,6 @@ namespace budgetApp
             button1 = new Button();
             panel2 = new Panel();
             LegendData = new Label();
-            button2 = new Button();
             panel1.SuspendLayout();
             LeftPanel.SuspendLayout();
             BarChartPanel.SuspendLayout();
@@ -211,15 +211,25 @@ namespace budgetApp
             panel7.Size = new Size(238, 122);
             panel7.TabIndex = 5;
             // 
+            // button2
+            // 
+            button2.Location = new Point(-3, 11);
+            button2.Name = "button2";
+            button2.Size = new Size(75, 23);
+            button2.TabIndex = 9;
+            button2.Text = "button2";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
             // AddExpense
             // 
-            AddExpense.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            AddExpense.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             AddExpense.FlatAppearance.BorderSize = 0;
             AddExpense.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
             AddExpense.FlatAppearance.MouseOverBackColor = Color.Black;
             AddExpense.FlatStyle = FlatStyle.Flat;
             AddExpense.ForeColor = Color.AliceBlue;
-            AddExpense.Location = new Point(67, 11);
+            AddExpense.Location = new Point(75, 9);
             AddExpense.Name = "AddExpense";
             AddExpense.Size = new Size(160, 27);
             AddExpense.TabIndex = 8;
@@ -305,13 +315,12 @@ namespace budgetApp
             // 
             // button1
             // 
-            button1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             button1.FlatAppearance.BorderSize = 0;
             button1.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
             button1.FlatAppearance.MouseOverBackColor = Color.Black;
             button1.FlatStyle = FlatStyle.Flat;
             button1.ForeColor = Color.AliceBlue;
-            button1.Location = new Point(-3, 0);
+            button1.Location = new Point(3, 3);
             button1.Name = "button1";
             button1.Size = new Size(93, 27);
             button1.TabIndex = 7;
@@ -337,16 +346,6 @@ namespace budgetApp
             LegendData.Name = "LegendData";
             LegendData.Size = new Size(0, 15);
             LegendData.TabIndex = 4;
-            // 
-            // button2
-            // 
-            button2.Location = new Point(-3, 11);
-            button2.Name = "button2";
-            button2.Size = new Size(75, 23);
-            button2.TabIndex = 9;
-            button2.Text = "button2";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
             // 
             // MainForm
             // 

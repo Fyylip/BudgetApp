@@ -10,6 +10,7 @@ namespace budgetApp.DataBase
     public class DatabaseHelper
     {
         private string _connectionString = "Data Source=DESKTOP-IM5HQGK\\SQLEXPRESS;Initial Catalog=LoginApp;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
+        private object _userId;
 
         public void ExecuteNonQuery(string query, params SqlParameter[] parameters)
         {
@@ -243,6 +244,77 @@ namespace budgetApp.DataBase
             }
         }
 
+        public void AddAddiction(int userId, string addictionName, decimal amount)
+        {
+            string query = "INSERT INTO Addictions (UserId, AddictionName, Amount, Date) VALUES (@UserId, @AddictionName, @Amount, @Date)";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@AddictionName", addictionName),
+                new SqlParameter("@Amount", amount),
+                new SqlParameter("@Date", DateTime.Now)
+            };
+
+            ExecuteNonQuery(query, parameters);
+        }
+
+        public void UpdateAddictionAmount(int userId, string addictionName, decimal amount)
+        {
+            string query = "UPDATE Addictions SET Amount = Amount + @Amount WHERE UserId = @UserId AND AddictionName = @AddictionName";
+
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Amount", amount);
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@AddictionName", addictionName);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                // Dodanie tych samych danych do LineChartData
+                string insertLineChartQuery = "INSERT INTO LineChartData (UserId, Amount, Date) VALUES (@UserId, @Amount, @Date)";
+                using (SqlCommand cmdLineChart = new SqlCommand(insertLineChartQuery, con))
+                {
+                    cmdLineChart.Parameters.AddWithValue("@UserId", userId);
+                    cmdLineChart.Parameters.AddWithValue("@Amount", amount);  // Przechowywanie aktualnej kwoty wydatków
+                    cmdLineChart.Parameters.AddWithValue("@Date", DateTime.Now);  // Dodawanie daty
+                    cmdLineChart.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<(string Name, decimal Amount)> GetAddictionsWithAmounts(int userId)
+        {
+            List<(string Name, decimal Amount)> addictions = new List<(string Name, decimal Amount)>();
+
+            string query = "SELECT AddictionName, Amount FROM Addictions WHERE UserId = @UserId ORDER BY Date DESC";
+
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string name = reader.GetString(0);
+                            decimal amount = reader.GetDecimal(1);
+                            addictions.Add((name, amount));
+                        }
+                    }
+                }
+            }
+
+            return addictions;
+        }
+
         public List<decimal> GetMonthlyExpenses(int userId)
         {
             List<decimal> monthlyExpenses = new List<decimal>(new decimal[12]); // Inicjalizacja listy 12 elementów (po jednym na każdy miesiąc)
@@ -276,67 +348,84 @@ namespace budgetApp.DataBase
 
             return monthlyExpenses;
         }
-
-        public void AddAddiction(int userId, string addictionName, decimal amount)
+        public (List<decimal> amounts, List<string> categories) GetPieChartData(int userId)
         {
-            string query = "INSERT INTO Addictions (UserId, AddictionName, Amount, Date) VALUES (@UserId, @AddictionName, @Amount, @Date)";
-
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("@UserId", userId),
-                new SqlParameter("@AddictionName", addictionName),
-                new SqlParameter("@Amount", amount),
-                new SqlParameter("@Date", DateTime.Now)
-            };
-
-            ExecuteNonQuery(query, parameters);
-        }
-
-        public void UpdateAddictionAmount(int userId, string addictionName, decimal amount)
-        {
-            string query = "UPDATE Addictions SET Amount = Amount + @Amount WHERE UserId = @UserId AND AddictionName = @AddictionName";
+            List<string> categories = new List<string>();
+            List<decimal> amounts = new List<decimal>();
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                con.Open();
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                try
                 {
-                    cmd.Parameters.AddWithValue("@Amount", amount);
-                    cmd.Parameters.AddWithValue("@UserId", userId);
-                    cmd.Parameters.AddWithValue("@AddictionName", addictionName);
+                    con.Open();
 
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public List<(string Name, decimal Amount)> GetAddictionsWithAmounts(int userId)
-        {
-            List<(string Name, decimal Amount)> addictions = new List<(string Name, decimal Amount)>();
-
-            string query = "SELECT AddictionName, Amount FROM Addictions WHERE UserId = @UserId ORDER BY Date DESC";
-
-            using (SqlConnection con = new SqlConnection(_connectionString))
-            {
-                con.Open();
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@UserId", userId);
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    // Zabezpieczanie zapytania SQL
+                    string query = "SELECT Amount, Category FROM PieChartData WHERE UserId = @UserId";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        while (reader.Read())
+                        // Użycie parametru przekazywanego do metody
+                        cmd.Parameters.AddWithValue("@UserId", userId);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            string name = reader.GetString(0);
-                            decimal amount = reader.GetDecimal(1);
-                            addictions.Add((name, amount));
+                            // Sprawdzanie danych w bazie
+                            while (reader.Read())
+                            {
+                                string categoryFromDb = reader["Category"]?.ToString() ?? "Brak kategorii";
+                                decimal amountFromDb = reader["Amount"] != DBNull.Value ? Convert.ToDecimal(reader["Amount"]) : 0;
+
+                                categories.Add(categoryFromDb);
+                                amounts.Add(amountFromDb);
+                            }
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Błąd podczas pobierania danych dla wykresu kołowego: " + ex.Message);
+                }
+
+                return (amounts, categories);
+            }
+        }
+
+        public decimal GetTotalValue(int userId, string label)
+        {
+            decimal totalValue = 0;
+
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    con.Open();
+
+                    string query = "SELECT Value FROM Total WHERE UserId = @UserId AND Label = @Label";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@UserId", userId);
+                        cmd.Parameters.AddWithValue("@Label", label);
+
+                        var result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            totalValue = (decimal)result;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Błąd podczas pobierania danych z tabeli Total: " + ex.Message);
+                }
             }
 
-            return addictions;
+            return totalValue;
         }
+
+
+
+
+
+        //MAIN FORM 
 
         public class SavingGoal
         {
@@ -345,6 +434,8 @@ namespace budgetApp.DataBase
             public decimal HowMuch { get; set; }
         }
 
+
+
     }
 }
-        
+

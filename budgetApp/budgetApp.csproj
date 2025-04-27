@@ -16,13 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Login.cs" />
+    <Compile Update="Login\Login.cs" />
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Rejestr.cs">
+    <Compile Update="Login\Rejestr.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
