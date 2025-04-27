@@ -10,6 +10,10 @@ using System.Windows.Forms;
 using ViewModelsSamples.Pies.Basic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using System.Data.SqlClient;
+using budgetApp.DataBase;
+using System.Windows.Forms.DataVisualization.Charting;
+using Microsoft.VisualBasic.ApplicationServices;
+
 
 namespace budgetApp
 {
@@ -20,37 +24,61 @@ namespace budgetApp
         private CartesianChart lineChart;
         private PieChart pieChart;
         private CartesianChart barChartControl;
+        private DatabaseHelper _dbHelper;
 
-        public MainForm()
-        {
-            // Konstruktor domyœlny
-        }
+        //public MainForm(string email)
+        //{
+        //    // Konstruktor domyœlny
+        //}
 
         public MainForm(string username, int userId)
         {
             InitializeComponent();
             _username = username;
             _userId = userId;
-
-            // Inicjalizacja wykresów
+            _dbHelper = new DatabaseHelper();
             InitializeCharts();
+        }
+
+        public MainForm(DatabaseHelper dbHelper, int userId)
+        {
+            _dbHelper = dbHelper;
+            _userId = userId;
+        }
+
+        public MainForm(int userId)
+        {
+            _userId = userId;
         }
 
         private void InitializeCharts()
         {
             // Pobierz dane dla wykresu ko³owego
-var (amounts, categories) = GetPieChartData();
+            var (amounts, categories) = GetPieChartData();
+
             // Wykres liniowy
-            lineChart = new LineChart().CreateLineChart();
+            lineChart = new LineChart(_dbHelper).CreateLineChart(_userId); // Przekazanie _userId
             lineChart.Dock = DockStyle.Bottom;
             LineChartPanel.Controls.Add(lineChart);
             LineChartPanel.Resize += (s, e) => UpdateChartSize(lineChart, LineChartPanel);
 
-            // Wykres s³upkowy
-            barChartControl = new BarChart().CreateBarChart();
-            barChartControl.Dock = DockStyle.Bottom;
-            BarChartPanel.Controls.Add(barChartControl);
-            BarChartPanel.Resize += (s, e) => UpdateChartSize(barChartControl, BarChartPanel);
+            // Oszcêdnoœci
+            var chartGenerator = new BarChart(BarChartPanel);
+
+            // Pobierz dane z bazy danych dla celów oszczêdnoœci
+            var savingGoals = _dbHelper.GetSavingChartData(_userId);
+
+            foreach (var goal in savingGoals)
+            {
+                // Oblicz procent osi¹gniêcia celu
+                int percent = (goal.GoalAmount > 0) ? (int)((goal.HowMuch / goal.GoalAmount) * 100) : 0;
+
+                // Twórz panel postêpu dla ka¿dego celu
+                var panel = chartGenerator.CreateSavingsProgressPanel(goal.Label, percent, Color.Green);
+
+                // Dodaj panel do kontenera
+                BarChartPanel.Controls.Add(panel);
+            }
 
             // Wykres ko³owy
             var pieChartViewModel = new PieChartViewModel();
@@ -63,7 +91,12 @@ var (amounts, categories) = GetPieChartData();
             UpdateChartSize(lineChart, LineChartPanel);
             UpdateChartSize(barChartControl, BarChartPanel);
             UpdateChartSize(pieChart, PieChartPanel);
+
+            LoadAddictions();
         }
+
+
+        private BarChart barChart;
 
         private (List<decimal> amounts, List<string> categories) GetPieChartData()
         {
@@ -115,48 +148,41 @@ var (amounts, categories) = GetPieChartData();
         {
             lblUserName.Text = $"Witaj, {_username}!";
 
-            // Pobierz wartoœæ z bazy danych i przypisz j¹ do lblTotal
             SqlConnection con = new SqlConnection("Data Source=DESKTOP-IM5HQGK\\SQLEXPRESS;Initial Catalog=LoginApp;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
 
             try
             {
                 con.Open();
 
-                // SprawdŸ wartoœæ z tabeli Total
                 string query = "SELECT Value FROM Total WHERE UserId = @UserId AND Label = @Label";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@UserId", _userId);
-                cmd.Parameters.AddWithValue("@Label", "Wykres"); // Zamieñ na odpowiedni¹ etykietê
+                cmd.Parameters.AddWithValue("@Label", "Wykres");
 
                 var result = cmd.ExecuteScalar();
 
                 if (result != null)
                 {
                     decimal totalValue = (decimal)result;
-                    Total.Text = $"{totalValue}"; // Przypisz wynik do label
+                    Total.Text = $"{totalValue}";
+                    Application.DoEvents(); // Umo¿liwia aktualizacjê UI
                 }
                 else
                 {
-                    Total.Text = "Brak danych"; // Jeœli nie znaleziono rekordu
+                    Total.Text = "Brak danych";
                 }
 
-                // Dane do legendy wykresu ko³owego 
                 string query2 = "SELECT Category, Amount FROM PieChartData WHERE UserId = @UserId";
                 SqlCommand cmd2 = new SqlCommand(query2, con);
                 cmd2.Parameters.AddWithValue("@UserId", _userId);
 
                 SqlDataReader reader = cmd2.ExecuteReader();
-                List<decimal> amounts = new List<decimal>();
 
                 while (reader.Read())
                 {
-                    string categoryFromDb = reader["Category"]?.ToString() ?? string.Empty; // Fix for CS8600
-                    decimal amountFromDb = reader["Amount"] != DBNull.Value ? Convert.ToDecimal(reader["Amount"]) : 0;
-
+                    string categoryFromDb = reader["Category"]?.ToString() ?? string.Empty;
                     LegendData.Text += categoryFromDb + " ";
-
                 }
-
 
                 reader.Close();
             }
@@ -169,6 +195,7 @@ var (amounts, categories) = GetPieChartData();
                 con.Close();
             }
         }
+
 
         private void AddMoney_Click(object sender, EventArgs e)
         {
@@ -278,7 +305,39 @@ var (amounts, categories) = GetPieChartData();
             // Pass the required 'userId' parameter to the AddPieChart constructor
             AddPieChart addPieChart = new AddPieChart(_userId);
             addPieChart.Show();
+        }
+
+        private void SavingGoals_Click(object sender, EventArgs e)
+        {
+            SavingGoalsAdd addGoalForm = new SavingGoalsAdd(_userId);
+            addGoalForm.Show();
             this.Hide();
+        }
+
+        private void AddExpense_Click(object sender, EventArgs e)
+        {
+            AddExpense addExpenseForm = new AddExpense(_userId);
+            addExpenseForm.Show();
+        }
+
+        private void LoadAddictions()
+        {
+            var addictions = _dbHelper.GetAddictionsWithAmounts(_userId);
+
+            if (addictions.Count > 0)
+            {
+                Addictions.Text = string.Join(", ", addictions.Select(a => $"{a.Name} ({a.Amount} z³)"));
+            }
+            else
+            {
+                Addictions.Text = "Brak uzale¿nieñ.";
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            EditAddictions editAddictionsForm = new EditAddictions(_dbHelper, _userId);
+            editAddictionsForm.Show();
         }
     }
 }

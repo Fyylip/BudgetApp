@@ -1,22 +1,31 @@
-﻿using LiveChartsCore;
+﻿using budgetApp.DataBase;
+using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.VisualElements;
 using LiveChartsCore.SkiaSharpView.WinForms;
+using System.Collections.Generic;
 
 namespace budgetApp.Charts
 {
     public class LineChart
     {
-        public CartesianChart CreateLineChart()
+        private readonly DatabaseHelper _dbHelper;
+
+        public LineChart(DatabaseHelper dbHelper)
         {
+            _dbHelper = dbHelper;
+        }
+
+        public CartesianChart CreateLineChart(int userId)
+        {
+            var monthlyExpenses = _dbHelper.GetMonthlyExpenses(userId);
+
             return new CartesianChart
             {
-                // Podstawowa konfiguracja wykresu liniowego
                 Series = new ISeries[]
                 {
                     new LineSeries<double>
                     {
-                        Values = new double[] { 4000, 6000, 5000, 2000, 4000, 6000, 8000, 10000, 3000, 5000, 2000, 900 },
+                        Values = monthlyExpenses.ConvertAll(e => (double)e),
                         GeometrySize = 5,
                         LineSmoothness = 1
                     }

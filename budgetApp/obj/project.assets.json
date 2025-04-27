@@ -47,6 +47,15 @@
           }
         }
       },
+      "EcoCore/7.2.0.16599": {
+        "type": "package",
+        "compile": {
+          "lib/net40/MDriven.Net.Http.dll": {}
+        },
+        "runtime": {
+          "lib/net40/MDriven.Net.Http.dll": {}
+        }
+      },
       "HarfBuzzSharp/8.3.0.1": {
         "type": "package",
         "dependencies": {
@@ -942,6 +951,19 @@
         "azureicon.png",
         "lib/netstandard2.0/Azure.Identity.dll",
         "lib/netstandard2.0/Azure.Identity.xml"
+      ]
+    },
+    "EcoCore/7.2.0.16599": {
+      "sha512": "hroArdHe1Lou8Kr/5CmoefmkjVpojIm42TEeyTWpP3W28uEbe4Swa0so2BChteYIq7iGrinoMQi8f9FA2PzaKw==",
+      "type": "package",
+      "path": "ecocore/7.2.0.16599",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "EcoCore.nuspec.org",
+        "ecocore.7.2.0.16599.nupkg.sha512",
+        "ecocore.nuspec",
+        "lib/net40/MDriven.Net.Http.dll"
       ]
     },
     "HarfBuzzSharp/8.3.0.1": {
@@ -2341,6 +2363,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0-windows7.0": [
+      "EcoCore >= 7.2.0.16599",
       "LiveChartsCore.SkiaSharpView.WinForms >= 2.0.0-rc5.4",
       "Microsoft.Data.SqlClient >= 6.0.1",
       "WinForms.DataVisualization >= 1.10.0"
@@ -2396,6 +2419,10 @@
       "net8.0-windows7.0": {
         "targetAlias": "net8.0-windows",
         "dependencies": {
+          "EcoCore": {
+            "target": "Package",
+            "version": "[7.2.0.16599, )"
+          },
           "LiveChartsCore.SkiaSharpView.WinForms": {
             "target": "Package",
             "version": "[2.0.0-rc5.4, )"
@@ -2433,6 +2460,16 @@
     }
   },
   "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'EcoCore 7.2.0.16599' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
+      "libraryId": "EcoCore",
+      "targetGraphs": [
+        "net8.0-windows7.0"
+      ]
+    },
     {
       "code": "NU1701",
       "level": "Warning",

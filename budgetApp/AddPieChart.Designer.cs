@@ -36,7 +36,6 @@
             groupBox1 = new GroupBox();
             radioPleasures = new RadioButton();
             radioMustHave = new RadioButton();
-            buttonEdit = new Button();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
@@ -77,7 +76,7 @@
             Add.TabIndex = 4;
             Add.Text = "Add";
             Add.UseVisualStyleBackColor = true;
-            Add.Click += button1_Click;
+            Add.Click += buttonAdd_Click;
             // 
             // radioFood
             // 
@@ -129,28 +128,18 @@
             radioMustHave.Text = "Must have";
             radioMustHave.UseVisualStyleBackColor = true;
             // 
-            // buttonEdit
-            // 
-            buttonEdit.Location = new Point(35, 159);
-            buttonEdit.Name = "buttonEdit";
-            buttonEdit.Size = new Size(75, 23);
-            buttonEdit.TabIndex = 7;
-            buttonEdit.Text = "Edit";
-            buttonEdit.UseVisualStyleBackColor = true;
-            buttonEdit.Click += buttonEdit_Click;
-            // 
             // AddPieChart
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(24, 15, 47);
             ClientSize = new Size(365, 213);
-            Controls.Add(buttonEdit);
             Controls.Add(groupBox1);
             Controls.Add(Add);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(AmountInput);
+            ForeColor = SystemColors.ControlText;
             Name = "AddPieChart";
             Text = "AddMoney";
             groupBox1.ResumeLayout(false);
@@ -169,6 +158,5 @@
         private GroupBox groupBox1;
         private RadioButton radioPleasures;
         private RadioButton radioMustHave;
-        private Button buttonEdit;
     }
 }

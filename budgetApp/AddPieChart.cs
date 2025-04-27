@@ -31,7 +31,7 @@ namespace budgetApp
                 return string.Empty; // Zwracamy pusty ciąg, gdy żadna kategoria nie jest wybrana
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonAdd_Click(object sender, EventArgs e)
         {
             string category = GetSelectedCategory();
             if (string.IsNullOrWhiteSpace(category))
@@ -54,46 +54,15 @@ namespace budgetApp
                     // Jeśli rekord istnieje, zaktualizuj go
                     _dbHelper.UpdateRecord(_userId, category, amount);
                     MessageBox.Show("Kwota zaktualizowana w wykresie kołowym!");
+                    this.Close();
+                    MainForm mainForm = new MainForm(_userId);
+                    mainForm.Show();
                 }
                 else
                 {
                     // Jeśli rekord nie istnieje, dodaj nowy
                     _dbHelper.InsertRecord(_userId, category, amount);
                     MessageBox.Show("Dane dodane do wykresu kołowego!");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd: " + ex.Message);
-            }
-        }
-
-        private void buttonEdit_Click(object sender, EventArgs e)
-        {
-            string category = GetSelectedCategory();
-            if (category == "Unknown")
-            {
-                MessageBox.Show("Wybierz kategorię do edycji.");
-                return;
-            }
-
-            if (!decimal.TryParse(AmountInput.Text.Replace(',', '.'), out decimal newAmount))
-            {
-                MessageBox.Show("Nieprawidłowa kwota.");
-                return;
-            }
-
-            try
-            {
-                if (_dbHelper.RecordExists(_userId, category))
-                {
-                    _dbHelper.UpdateRecord(_userId, category, newAmount);
-                    MessageBox.Show("Kwota została zaktualizowana.");
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Nie znaleziono wpisu dla tej kategorii.");
                 }
             }
             catch (Exception ex)

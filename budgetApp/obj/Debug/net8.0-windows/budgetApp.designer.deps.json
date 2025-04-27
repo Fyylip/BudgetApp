@@ -41,6 +41,14 @@
           }
         }
       },
+      "EcoCore/7.2.0.16599": {
+        "runtime": {
+          "lib/net40/MDriven.Net.Http.dll": {
+            "assemblyVersion": "7.2.0.0",
+            "fileVersion": "7.2.0.16599"
+          }
+        }
+      },
       "HarfBuzzSharp/8.3.0.1": {
         "dependencies": {
           "HarfBuzzSharp.NativeAssets.Win32": "8.3.0.1",
@@ -641,6 +649,13 @@
       "sha512": "sha512-Sf4BoE6Q3jTgFkgBkx7qztYOFELBCo+wQgpYDwal/qJ1unBH73ywPztIJKXBXORRzAeNijsuxhk94h0TIMvfYg==",
       "path": "azure.identity/1.11.4",
       "hashPath": "azure.identity.1.11.4.nupkg.sha512"
+    },
+    "EcoCore/7.2.0.16599": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hroArdHe1Lou8Kr/5CmoefmkjVpojIm42TEeyTWpP3W28uEbe4Swa0so2BChteYIq7iGrinoMQi8f9FA2PzaKw==",
+      "path": "ecocore/7.2.0.16599",
+      "hashPath": "ecocore.7.2.0.16599.nupkg.sha512"
     },
     "HarfBuzzSharp/8.3.0.1": {
       "type": "package",

@@ -1,43 +1,61 @@
-﻿using LiveChartsCore;
-using LiveChartsCore.Kernel.Sketches;
-using LiveChartsCore.Measure;
-using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.Painting;
-using LiveChartsCore.SkiaSharpView.WinForms;
-using SkiaSharp;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace budgetApp.Charts;
 
 public class BarChart
 {
-    public CartesianChart CreateBarChart()
-    {
-        return new CartesianChart
-        {
-            Series = new ISeries[]
-            {
+    private Panel _targetPanel;
 
-                new RowSeries<int>
-                {
-                    Values = new int[] { 8 },
-                    Stroke = null,
-                    DataLabelsPaint = new SolidColorPaint(new SKColor(45, 45, 45)),
-                    DataLabelsSize = 14,
-                    DataLabelsPosition = DataLabelsPosition.End,
-                    Name = "Cars",
-                },
-                new RowSeries<int>
-                {
-                    Values = new int[] { 6 },
-                    Stroke = null,
-                    DataLabelsPaint = new SolidColorPaint(new SKColor(20, 20, 20)),
-                    DataLabelsSize = 14,
-                    DataLabelsPosition = DataLabelsPosition.End,
-                    Name = "Cars",
-                },
-            }
-        };
+    public BarChart(Panel targetPanel)
+    {
+        _targetPanel = targetPanel;
     }
+
+    public Panel CreateSavingsProgressPanel(string label, int percent, Color fillColor)
+    {
+        var container = new Panel
+        {
+            BackColor = Color.FromArgb(27, 13, 58),
+            Padding = new Padding(10),
+            Margin = new Padding(10),
+            Dock = DockStyle.Bottom,
+        };
+
+        var titleLabel = new Label
+        {
+            Text = $"{label} - {percent}%",
+            ForeColor = Color.White,
+            Dock = DockStyle.Top,
+            Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            Height = 20
+        };
+
+        var progressBarBackground = new Panel
+        {
+            BackColor = Color.Black,
+            Height = 10,
+            Dock = DockStyle.Top,
+            Margin = new Padding(0, 5, 0, 0)
+        };
+
+        var progressFill = new Panel
+        {
+            BackColor = fillColor,
+            Height = 10,
+            Dock = DockStyle.Left
+        };
+
+        progressBarBackground.Resize += (s, e) =>
+        {
+            progressFill.Width = (int)(progressBarBackground.Width * percent / 100.0);
+        };
+
+        progressBarBackground.Controls.Add(progressFill);
+        container.Controls.Add(progressBarBackground);
+        container.Controls.Add(titleLabel);
+
+        return container;
+    }
+
 }
-        
-   
