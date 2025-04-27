@@ -54,6 +54,7 @@ namespace budgetApp
 
         private void InitializeCharts()
         {
+
             // Pobierz dane dla wykresu ko³owego
             var (amounts, categories) = _dbHelper.GetPieChartData(_userId); // Pass the required 'userId' parameter
 
@@ -79,6 +80,11 @@ namespace budgetApp
 
                 // Dodaj panel do kontenera
                 BarChartPanel.Controls.Add(panel);
+
+                if (percent >= 100)
+                {
+                    _dbHelper.DeleteCompletedGoals(_userId);
+                }
             }
 
             // Wykres ko³owy
@@ -94,26 +100,32 @@ namespace budgetApp
             UpdateChartSize(pieChart, PieChartPanel);
 
             LoadAddictions();
+            UpdateTotalLabel();
         }
 
 
         private BarChart barChart;
 
-        private void LoadPieChartData()
+        //private void LoadPieChartData()
+        //{
+        //    DatabaseHelper dbHelper = new DatabaseHelper();
+
+        //    // Przekazujemy userId, zak³adaj¹c, ¿e masz tê zmienn¹ w MainForm
+        //    var (amounts, categories) = dbHelper.GetPieChartData(_userId);
+
+        //    // Przyk³ad: U¿ycie danych do wyœwietlenia wykresu
+        //    // Mo¿esz tutaj przypisaæ te dane do wykresu ko³owego
+        //    for (int i = 0; i < categories.Count; i++)
+        //    {
+        //        Console.WriteLine($"Kategoria: {categories[i]}, Kwota: {amounts[i]}");
+        //    }
+        //}
+        private void OpenSavingGoalsEdit()
         {
-            DatabaseHelper dbHelper = new DatabaseHelper();
-
-            // Przekazujemy userId, zak³adaj¹c, ¿e masz tê zmienn¹ w MainForm
-            var (amounts, categories) = dbHelper.GetPieChartData(_userId);
-
-            // Przyk³ad: U¿ycie danych do wyœwietlenia wykresu
-            // Mo¿esz tutaj przypisaæ te dane do wykresu ko³owego
-            for (int i = 0; i < categories.Count; i++)
-            {
-                Console.WriteLine($"Kategoria: {categories[i]}, Kwota: {amounts[i]}");
-            }
+            // Tworzenie instancji SavingGoalsEdit i przekazywanie userId
+            SavingGoalsEdit editForm = new SavingGoalsEdit(_userId);
+            editForm.ShowDialog();
         }
-
         private void UpdateChartSize(Control chart, Panel panel)
         {
             if (chart == null || panel == null) return;
@@ -136,43 +148,29 @@ namespace budgetApp
                 Total.Text = "Brak danych";
             }
         }
+
+        public void LoadPieChartData()
+        {
+            DatabaseHelper dbHelper = new DatabaseHelper();
+            var (amounts, categories) = dbHelper.GetPieChartData(_userId);
+
+            // Combine amounts and categories into a single list of tuples
+            List<(string Category, decimal Amount)> pieChartData = categories
+                .Zip(amounts, (category, amount) => (Category: category, Amount: amount))
+                .ToList();
+
+            LegendData.Text = string.Join(" ", pieChartData.Select(data => data.Category));
+        }
         private void MainForm_Load(object sender, EventArgs e)
         {
             lblUserName.Text = $"Witaj, {_username}!";
 
-            SqlConnection con = new SqlConnection("Data Source=DESKTOP-IM5HQGK\\SQLEXPRESS;Initial Catalog=LoginApp;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
 
-            try
-            {
-                con.Open();
-
-                LoadTotalValue();
-
-                string query2 = "SELECT Category, Amount FROM PieChartData WHERE UserId = @UserId";
-                SqlCommand cmd2 = new SqlCommand(query2, con);
-                cmd2.Parameters.AddWithValue("@UserId", _userId);
-
-                SqlDataReader reader = cmd2.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    string categoryFromDb = reader["Category"]?.ToString() ?? string.Empty;
-                    LegendData.Text += categoryFromDb + " ";
-                }
-
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("B³¹d: " + ex.Message);
-            }
-            finally
-            {
-                con.Close();
-            }
+            LoadTotalValue();
+            LoadPieChartData();
         }
 
-
+        // To jest chujowo ale nie mam czasu ju¿ 
         private void AddMoney_Click(object sender, EventArgs e)
         {
             // Pytanie o kwotê
@@ -231,7 +229,7 @@ namespace budgetApp
                     }
 
                     // Po dodaniu lub zaktualizowaniu danych, odœwie¿ etykietê
-                    UpdateTotalLabel(con);
+                    UpdateTotalLabel();
                 }
                 catch (Exception ex)
                 {
@@ -248,32 +246,41 @@ namespace budgetApp
             }
         }
 
-        private void UpdateTotalLabel(SqlConnection con)
+        //private void UpdateTotalLabel(SqlConnection con)
+        //{
+        //    try
+        //    {
+        //        // Pobierz zaktualizowan¹ wartoœæ z bazy danych
+        //        string query = "SELECT Value FROM Total WHERE UserId = @UserId AND Label = @Label";
+        //        SqlCommand cmd = new SqlCommand(query, con);
+        //        cmd.Parameters.AddWithValue("@UserId", _userId);
+        //        cmd.Parameters.AddWithValue("@Label", "Wykres");
+
+        //        var result = cmd.ExecuteScalar();
+
+        //        if (result != null)
+        //        {
+        //            decimal totalValue = (decimal)result;
+        //            Total.Text = $"{totalValue}"; // Przypisz wynik do label
+        //        }
+        //        else
+        //        {
+        //            Total.Text = "Brak danych"; // Jeœli nie znaleziono rekordu
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("B³¹d podczas aktualizacji etykiety: " + ex.Message);
+        //    }
+        //}
+
+        private void UpdateTotalLabel()
         {
-            try
-            {
-                // Pobierz zaktualizowan¹ wartoœæ z bazy danych
-                string query = "SELECT Value FROM Total WHERE UserId = @UserId AND Label = @Label";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@UserId", _userId);
-                cmd.Parameters.AddWithValue("@Label", "Wykres");
+            DatabaseHelper dbHelper = new DatabaseHelper();
+            decimal totalValue = dbHelper.GetTotalValue(_userId, "Wykres"); // U¿yj etykiety, np. "Wykres"
 
-                var result = cmd.ExecuteScalar();
+            Total.Text = $"{totalValue}";
 
-                if (result != null)
-                {
-                    decimal totalValue = (decimal)result;
-                    Total.Text = $"{totalValue}"; // Przypisz wynik do label
-                }
-                else
-                {
-                    Total.Text = "Brak danych"; // Jeœli nie znaleziono rekordu
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("B³¹d podczas aktualizacji etykiety: " + ex.Message);
-            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -294,17 +301,17 @@ namespace budgetApp
         private void AddExpense_Click(object sender, EventArgs e)
         {
             AddExpense addExpenseForm = new AddExpense(_userId);
-            addExpenseForm.FormClosed += (s, args) => InitializeCharts(); // Odœwie¿enie wykresu po zamkniêciu okna
+            addExpenseForm.FormClosed += (s, args) => LoadAddictions(); // Odœwie¿enie wykresu po zamkniêciu okna
             addExpenseForm.Show();
         }
-
+        // Name mog¹ byæ pojebane bo siê spieszy³em
         private void LoadAddictions()
         {
             var addictions = _dbHelper.GetAddictionsWithAmounts(_userId);
 
             if (addictions.Count > 0)
             {
-                Addictions.Text = string.Join(", ", addictions.Select(a => $"{a.Name} ({a.Amount} z³)"));
+                Addictions.Text = string.Join("\n \n", addictions.Select(a => $"{a.Name} ({a.Amount} z³)"));
             }
             else
             {
@@ -318,6 +325,14 @@ namespace budgetApp
             EditAddictions editAddictionsForm = new EditAddictions(_dbHelper, _userId);
             editAddictionsForm.FormClosed += (s, args) => InitializeCharts(); // Odœwie¿enie danych po zamkniêciu okna
             editAddictionsForm.Show();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            SavingGoalsEdit editGoalsForm = new SavingGoalsEdit(_userId);
+            editGoalsForm.FormClosed += (s, args) => InitializeCharts(); // Odœwie¿enie danych po zamkniêciu okna
+            editGoalsForm.Show();
+
         }
     }
 }

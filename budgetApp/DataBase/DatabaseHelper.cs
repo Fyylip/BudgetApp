@@ -421,12 +421,123 @@ namespace budgetApp.DataBase
             return totalValue;
         }
 
+        //public decimal UpdateTotalLabel(int userId, string label)
+        //{
+        //    decimal totalValue = 0;
 
+        //    using (SqlConnection con = new SqlConnection(_connectionString))
+        //    {
+        //        try
+        //        {
+        //            con.Open();
 
+        //            // Pobierz wartość z bazy danych
+        //            string query = "SELECT Value FROM Total WHERE UserId = @UserId AND Label = @Label";
+        //            SqlCommand cmd = new SqlCommand(query, con);
+        //            cmd.Parameters.AddWithValue("@UserId", userId);
+        //            cmd.Parameters.AddWithValue("@Label", label);
 
+        //            var result = cmd.ExecuteScalar();
 
-        //MAIN FORM 
+        //            if (result != null)
+        //            {
+        //                totalValue = (decimal)result;
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Błąd podczas pobierania danych: " + ex.Message);
+        //        }
+        //    }
 
+        //    return totalValue;
+        //}
+
+        public decimal UpdataotalValue(int userId, string label)
+        {
+            decimal totalValue = 0;
+
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    con.Open();
+
+                    // Pobierz wartość z bazy danych
+                    string query = "SELECT Value FROM Total WHERE UserId = @UserId AND Label = @Label";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@Label", label);
+
+                    var result = cmd.ExecuteScalar();
+
+                    if (result != null)
+                    {
+                        totalValue = (decimal)result;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Błąd podczas pobierania danych: " + ex.Message);
+                }
+            }
+
+            return totalValue;
+        }
+        public static void UpdateSavingGoalAmount(int userId, string label, decimal amountToAdd)
+        {
+            // Convert _connectionString to static to resolve CS0120 error
+            string connectionString = "Data Source=DESKTOP-IM5HQGK\\SQLEXPRESS;Initial Catalog=LoginApp;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                // 1. Pobierz aktualną kwotę
+                string selectQuery = "SELECT HowMuch FROM ChartGoalsData WHERE UserId = @UserId AND Label = @Label";
+                SqlCommand selectCmd = new SqlCommand(selectQuery, con);
+                selectCmd.Parameters.AddWithValue("@UserId", userId);
+                selectCmd.Parameters.AddWithValue("@Label", label);
+
+                var result = selectCmd.ExecuteScalar();
+
+                if (result != null)
+                {
+                    decimal currentAmount = (decimal)result;
+                    decimal newAmount = currentAmount + amountToAdd;
+
+                    // 2. Zaktualizuj
+                    string updateQuery = "UPDATE ChartGoalsData SET HowMuch = @NewAmount WHERE UserId = @UserId AND Label = @Label";
+                    SqlCommand updateCmd = new SqlCommand(updateQuery, con);
+                    updateCmd.Parameters.AddWithValue("@NewAmount", newAmount);
+                    updateCmd.Parameters.AddWithValue("@UserId", userId);
+                    updateCmd.Parameters.AddWithValue("@Label", label);
+
+                    updateCmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    throw new Exception("Saving goal not found.");
+                }
+            }
+        }
+
+        public void DeleteCompletedGoals(int userId)
+        {
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                con.Open();
+
+                string deleteQuery = @"
+            DELETE FROM ChartGoalsData
+            WHERE UserId = @UserId AND HowMuch >= Goal";
+
+                using (SqlCommand cmd = new SqlCommand(deleteQuery, con))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         public class SavingGoal
         {
             public string Label { get; set; }

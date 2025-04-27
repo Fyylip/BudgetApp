@@ -19,5 +19,8 @@
     <Compile Update="AddForms\SavingGoalsAdd.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="AddForms\SavingGoalsEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

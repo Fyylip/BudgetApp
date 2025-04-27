@@ -31,12 +31,13 @@ namespace budgetApp
         {
             lblUserName = new Label();
             panel1 = new Panel();
+            SavingGoals = new Button();
             AddMoney = new Button();
             Total = new Label();
+            button3 = new Button();
             LeftPanel = new TableLayoutPanel();
             BarChartPanel = new Panel();
             panel4 = new Panel();
-            SavingGoals = new Button();
             label6 = new Label();
             panel3 = new Panel();
             panel7 = new Panel();
@@ -88,6 +89,22 @@ namespace budgetApp
             panel1.Size = new Size(896, 100);
             panel1.TabIndex = 0;
             // 
+            // SavingGoals
+            // 
+            SavingGoals.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            SavingGoals.FlatAppearance.BorderSize = 0;
+            SavingGoals.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
+            SavingGoals.FlatAppearance.MouseOverBackColor = Color.Black;
+            SavingGoals.FlatStyle = FlatStyle.Flat;
+            SavingGoals.ForeColor = Color.AliceBlue;
+            SavingGoals.Location = new Point(511, 3);
+            SavingGoals.Name = "SavingGoals";
+            SavingGoals.Size = new Size(129, 41);
+            SavingGoals.TabIndex = 3;
+            SavingGoals.Text = "Add Saving Goals";
+            SavingGoals.UseVisualStyleBackColor = true;
+            SavingGoals.Click += SavingGoals_Click;
+            // 
             // AddMoney
             // 
             AddMoney.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
@@ -115,6 +132,16 @@ namespace budgetApp
             Total.Size = new Size(83, 30);
             Total.TabIndex = 1;
             Total.Text = "label13";
+            // 
+            // button3
+            // 
+            button3.Location = new Point(9, 7);
+            button3.Name = "button3";
+            button3.Size = new Size(75, 23);
+            button3.TabIndex = 4;
+            button3.Text = "button3";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // LeftPanel
             // 
@@ -152,6 +179,7 @@ namespace budgetApp
             // panel4
             // 
             panel4.BackColor = Color.FromArgb(35, 23, 74);
+            panel4.Controls.Add(button3);
             panel4.Controls.Add(SavingGoals);
             panel4.Controls.Add(label6);
             panel4.Dock = DockStyle.Top;
@@ -160,28 +188,12 @@ namespace budgetApp
             panel4.Size = new Size(646, 64);
             panel4.TabIndex = 0;
             // 
-            // SavingGoals
-            // 
-            SavingGoals.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            SavingGoals.FlatAppearance.BorderSize = 0;
-            SavingGoals.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
-            SavingGoals.FlatAppearance.MouseOverBackColor = Color.Black;
-            SavingGoals.FlatStyle = FlatStyle.Flat;
-            SavingGoals.ForeColor = Color.AliceBlue;
-            SavingGoals.Location = new Point(511, 3);
-            SavingGoals.Name = "SavingGoals";
-            SavingGoals.Size = new Size(129, 27);
-            SavingGoals.TabIndex = 3;
-            SavingGoals.Text = "Add Saving Goals";
-            SavingGoals.UseVisualStyleBackColor = true;
-            SavingGoals.Click += SavingGoals_Click;
-            // 
             // label6
             // 
             label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label6.Font = new Font("Segoe UI", 30F);
             label6.ForeColor = Color.White;
-            label6.Location = new Point(0, 0);
+            label6.Location = new Point(9, 1);
             label6.Name = "label6";
             label6.Size = new Size(640, 54);
             label6.TabIndex = 0;
@@ -407,5 +419,6 @@ namespace budgetApp
         private Button button1;
         private Button AddExpense;
         private Button button2;
+        private Button button3;
     }
 }

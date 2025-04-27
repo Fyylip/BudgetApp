@@ -16,7 +16,7 @@ public class BarChart
     {
         var container = new Panel
         {
-            BackColor = Color.FromArgb(27, 13, 58),
+            BackColor = Color.FromArgb(35, 23, 74),
             Padding = new Padding(10),
             Margin = new Padding(10),
             Dock = DockStyle.Bottom,
