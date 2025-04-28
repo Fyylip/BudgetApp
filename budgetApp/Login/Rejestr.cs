@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace LoginSystem
 {
@@ -17,6 +18,8 @@ namespace LoginSystem
         public Rejestr()
         {
             InitializeComponent();
+            txtPassword.UseSystemPasswordChar = true;
+            txtPassword2.UseSystemPasswordChar = true;
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -31,13 +34,18 @@ namespace LoginSystem
                 return;
             }
 
-            if(password != password2)
+            if (password != password2)
             {
                 MessageBox.Show("Hasła nie są takie same.");
                 return;
             }
 
-            // Haszujemy hasło przed zapisaniem
+            if (!IsValidPassword(password))
+            {
+                MessageBox.Show("Hasło musi zawierać co najmniej 6 znaków, dużą literę i znak specjalny.");
+                return;
+            }
+
             string hashedPassword = HashPassword(password);
 
             SqlConnection con = new SqlConnection("Data Source=DESKTOP-IM5HQGK\\SQLEXPRESS;Initial Catalog=LoginApp;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
@@ -46,7 +54,6 @@ namespace LoginSystem
             {
                 con.Open();
 
-                // Sprawdź czy użytkownik istnieje
                 string checkQuery = "SELECT COUNT(*) FROM Users WHERE userName = @username";
                 SqlCommand checkCmd = new SqlCommand(checkQuery, con);
                 checkCmd.Parameters.AddWithValue("@username", email);
@@ -59,7 +66,6 @@ namespace LoginSystem
                 }
                 else
                 {
-                    // Dodaj nowego użytkownika z haszowanym hasłem
                     string insertQuery = "INSERT INTO Users (userName, pasword) VALUES (@username, @password)";
                     SqlCommand insertCmd = new SqlCommand(insertQuery, con);
                     insertCmd.Parameters.AddWithValue("@username", email);
@@ -67,7 +73,7 @@ namespace LoginSystem
 
                     insertCmd.ExecuteNonQuery();
                     MessageBox.Show("Rejestracja zakończona sukcesem!");
-                    this.Close(); // Zamykamy formularz
+                    this.Close();
                 }
             }
             catch (Exception ex)
@@ -80,7 +86,27 @@ namespace LoginSystem
             }
         }
 
-        // Funkcja do haszowania hasła
+        private bool IsValidPassword(string password)
+        {
+            string pattern = @"^(?=.*[A-Z])(?=.*\W).{6,}$";
+            Regex regex = new Regex(pattern);
+            return regex.IsMatch(password);
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                txtPassword.PasswordChar = '\0';
+                txtPassword2.PasswordChar = '\0';
+            }
+            else
+            {
+                txtPassword.PasswordChar = '*';
+                txtPassword2.PasswordChar = '*';
+            }
+        }
+
         private string HashPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())
@@ -95,3 +121,4 @@ namespace LoginSystem
         }
     }
 }
+    

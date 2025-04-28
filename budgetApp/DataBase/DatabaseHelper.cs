@@ -348,6 +348,72 @@ namespace budgetApp.DataBase
 
             return monthlyExpenses;
         }
+
+        public List<decimal> GetWeeklyExpenses(int userId)
+        {
+            List<decimal> weeklyExpenses = new List<decimal>();
+
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                con.Open();
+                string query = @"
+            SELECT CAST(Date AS DATE) AS Day, SUM(Amount) AS TotalAmount
+            FROM LineChartData
+            WHERE UserId = @UserId AND Date >= DATEADD(DAY, -6, GETDATE())
+            GROUP BY CAST(Date AS DATE)
+            ORDER BY Day";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            decimal totalAmount = reader.GetDecimal(1);
+                            weeklyExpenses.Add(totalAmount);
+                        }
+                    }
+                }
+            }
+
+            return weeklyExpenses;
+        }
+
+        //public List<decimal> GetMonthlyDailyExpenses(int userId)
+        //{
+        //    List<decimal> dailyExpenses = new List<decimal>();
+
+        //    using (SqlConnection con = new SqlConnection(_connectionString))
+        //    {
+        //        con.Open();
+        //        string query = @"
+        //    SELECT DAY(Date) AS Day, SUM(Amount) AS TotalAmount
+        //    FROM LineChartData
+        //    WHERE UserId = @UserId AND MONTH(Date) = MONTH(GETDATE()) AND YEAR(Date) = YEAR(GETDATE())
+        //    GROUP BY DAY(Date)
+        //    ORDER BY Day";
+
+        //        using (SqlCommand cmd = new SqlCommand(query, con))
+        //        {
+        //            cmd.Parameters.AddWithValue("@UserId", userId);
+
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                while (reader.Read())
+        //                {
+        //                    decimal totalAmount = reader.GetDecimal(1);
+        //                    dailyExpenses.Add(totalAmount);
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return dailyExpenses;
+        //}
+
+
         public (List<decimal> amounts, List<string> categories) GetPieChartData(int userId)
         {
             List<string> categories = new List<string>();

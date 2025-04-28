@@ -31,9 +31,9 @@ namespace budgetApp
         {
             lblUserName = new Label();
             panel1 = new Panel();
-            SavingGoals = new Button();
             AddMoney = new Button();
             Total = new Label();
+            SavingGoals = new Button();
             button3 = new Button();
             LeftPanel = new TableLayoutPanel();
             BarChartPanel = new Panel();
@@ -48,11 +48,11 @@ namespace budgetApp
             label8 = new Label();
             LineChartPanel = new Panel();
             panel5 = new Panel();
+            btnYerMonth = new Button();
+            btnLineYer = new Button();
             label7 = new Label();
             PieChartPanel = new Panel();
             button1 = new Button();
-            panel2 = new Panel();
-            LegendData = new Label();
             panel1.SuspendLayout();
             LeftPanel.SuspendLayout();
             BarChartPanel.SuspendLayout();
@@ -63,7 +63,6 @@ namespace budgetApp
             LineChartPanel.SuspendLayout();
             panel5.SuspendLayout();
             PieChartPanel.SuspendLayout();
-            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // lblUserName
@@ -89,25 +88,10 @@ namespace budgetApp
             panel1.Size = new Size(896, 100);
             panel1.TabIndex = 0;
             // 
-            // SavingGoals
-            // 
-            SavingGoals.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            SavingGoals.FlatAppearance.BorderSize = 0;
-            SavingGoals.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
-            SavingGoals.FlatAppearance.MouseOverBackColor = Color.Black;
-            SavingGoals.FlatStyle = FlatStyle.Flat;
-            SavingGoals.ForeColor = Color.AliceBlue;
-            SavingGoals.Location = new Point(511, 3);
-            SavingGoals.Name = "SavingGoals";
-            SavingGoals.Size = new Size(129, 41);
-            SavingGoals.TabIndex = 3;
-            SavingGoals.Text = "Add Saving Goals";
-            SavingGoals.UseVisualStyleBackColor = true;
-            SavingGoals.Click += SavingGoals_Click;
-            // 
             // AddMoney
             // 
             AddMoney.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            AddMoney.BackColor = Color.FromArgb(26, 17, 55);
             AddMoney.FlatAppearance.BorderSize = 0;
             AddMoney.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
             AddMoney.FlatAppearance.MouseOverBackColor = Color.Black;
@@ -118,7 +102,7 @@ namespace budgetApp
             AddMoney.Size = new Size(92, 27);
             AddMoney.TabIndex = 2;
             AddMoney.Text = "Add money";
-            AddMoney.UseVisualStyleBackColor = true;
+            AddMoney.UseVisualStyleBackColor = false;
             AddMoney.Click += AddMoney_Click;
             // 
             // Total
@@ -133,14 +117,35 @@ namespace budgetApp
             Total.TabIndex = 1;
             Total.Text = "label13";
             // 
+            // SavingGoals
+            // 
+            SavingGoals.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            SavingGoals.BackColor = Color.FromArgb(26, 17, 55);
+            SavingGoals.FlatAppearance.BorderSize = 0;
+            SavingGoals.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
+            SavingGoals.FlatAppearance.MouseOverBackColor = Color.Black;
+            SavingGoals.FlatStyle = FlatStyle.Flat;
+            SavingGoals.ForeColor = Color.AliceBlue;
+            SavingGoals.Location = new Point(528, 3);
+            SavingGoals.Name = "SavingGoals";
+            SavingGoals.Size = new Size(115, 27);
+            SavingGoals.TabIndex = 3;
+            SavingGoals.Text = "Add Saving Goals";
+            SavingGoals.UseVisualStyleBackColor = false;
+            SavingGoals.Click += SavingGoals_Click;
+            // 
             // button3
             // 
+            button3.BackColor = Color.FromArgb(26, 17, 55);
+            button3.FlatAppearance.BorderSize = 0;
+            button3.FlatStyle = FlatStyle.Flat;
+            button3.ForeColor = Color.White;
             button3.Location = new Point(9, 7);
             button3.Name = "button3";
             button3.Size = new Size(75, 23);
             button3.TabIndex = 4;
             button3.Text = "button3";
-            button3.UseVisualStyleBackColor = true;
+            button3.UseVisualStyleBackColor = false;
             button3.Click += button3_Click;
             // 
             // LeftPanel
@@ -225,28 +230,36 @@ namespace budgetApp
             // 
             // button2
             // 
-            button2.Location = new Point(-3, 11);
+            button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button2.BackColor = Color.FromArgb(26, 17, 55);
+            button2.FlatAppearance.BorderSize = 0;
+            button2.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
+            button2.FlatAppearance.MouseOverBackColor = Color.Black;
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.ForeColor = Color.AliceBlue;
+            button2.Location = new Point(141, 39);
             button2.Name = "button2";
-            button2.Size = new Size(75, 23);
-            button2.TabIndex = 9;
-            button2.Text = "button2";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            button2.Size = new Size(94, 27);
+            button2.TabIndex = 10;
+            button2.Text = "Add expense";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button3_Click;
             // 
             // AddExpense
             // 
             AddExpense.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            AddExpense.BackColor = Color.FromArgb(26, 17, 55);
             AddExpense.FlatAppearance.BorderSize = 0;
             AddExpense.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
             AddExpense.FlatAppearance.MouseOverBackColor = Color.Black;
             AddExpense.FlatStyle = FlatStyle.Flat;
             AddExpense.ForeColor = Color.AliceBlue;
-            AddExpense.Location = new Point(75, 9);
+            AddExpense.Location = new Point(144, 9);
             AddExpense.Name = "AddExpense";
-            AddExpense.Size = new Size(160, 27);
+            AddExpense.Size = new Size(91, 27);
             AddExpense.TabIndex = 8;
-            AddExpense.Text = "add expense for addiction";
-            AddExpense.UseVisualStyleBackColor = true;
+            AddExpense.Text = "Add addiction";
+            AddExpense.UseVisualStyleBackColor = false;
             AddExpense.Click += AddExpense_Click;
             // 
             // Addictions
@@ -295,6 +308,8 @@ namespace budgetApp
             // 
             // panel5
             // 
+            panel5.Controls.Add(btnYerMonth);
+            panel5.Controls.Add(btnLineYer);
             panel5.Controls.Add(label7);
             panel5.Dock = DockStyle.Top;
             panel5.Location = new Point(0, 0);
@@ -302,23 +317,58 @@ namespace budgetApp
             panel5.Size = new Size(646, 54);
             panel5.TabIndex = 0;
             // 
+            // btnYerMonth
+            // 
+            btnYerMonth.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            btnYerMonth.BackColor = Color.FromArgb(26, 17, 55);
+            btnYerMonth.FlatAppearance.BorderSize = 0;
+            btnYerMonth.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
+            btnYerMonth.FlatAppearance.MouseOverBackColor = Color.Black;
+            btnYerMonth.FlatStyle = FlatStyle.Flat;
+            btnYerMonth.Font = new Font("Segoe UI", 18F);
+            btnYerMonth.ForeColor = Color.AliceBlue;
+            btnYerMonth.Location = new Point(398, 3);
+            btnYerMonth.Name = "btnYerMonth";
+            btnYerMonth.Size = new Size(94, 45);
+            btnYerMonth.TabIndex = 6;
+            btnYerMonth.Text = "Week";
+            btnYerMonth.UseVisualStyleBackColor = false;
+            btnYerMonth.Click += btnYerMonth_Click;
+            // 
+            // btnLineYer
+            // 
+            btnLineYer.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            btnLineYer.BackColor = Color.FromArgb(26, 17, 55);
+            btnLineYer.FlatAppearance.BorderSize = 0;
+            btnLineYer.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
+            btnLineYer.FlatAppearance.MouseOverBackColor = Color.Black;
+            btnLineYer.FlatStyle = FlatStyle.Flat;
+            btnLineYer.Font = new Font("Segoe UI", 18F);
+            btnLineYer.ForeColor = Color.AliceBlue;
+            btnLineYer.Location = new Point(285, 3);
+            btnLineYer.Name = "btnLineYer";
+            btnLineYer.Size = new Size(84, 45);
+            btnLineYer.TabIndex = 5;
+            btnLineYer.Text = "Month";
+            btnLineYer.UseVisualStyleBackColor = false;
+            btnLineYer.Click += btnLineYer_Click;
+            // 
             // label7
             // 
             label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label7.Font = new Font("Segoe UI", 30F);
+            label7.Font = new Font("Segoe UI", 22F);
             label7.ForeColor = Color.White;
-            label7.Location = new Point(3, 0);
+            label7.Location = new Point(-3, 3);
             label7.Name = "label7";
-            label7.Size = new Size(646, 54);
+            label7.Size = new Size(307, 48);
             label7.TabIndex = 1;
-            label7.Text = "Expenses during the year";
+            label7.Text = "Expenses during the ";
             label7.TextAlign = ContentAlignment.TopCenter;
             // 
             // PieChartPanel
             // 
             PieChartPanel.BackColor = Color.FromArgb(35, 23, 74);
             PieChartPanel.Controls.Add(button1);
-            PieChartPanel.Controls.Add(panel2);
             PieChartPanel.Dock = DockStyle.Fill;
             PieChartPanel.Location = new Point(3, 3);
             PieChartPanel.Name = "PieChartPanel";
@@ -327,6 +377,7 @@ namespace budgetApp
             // 
             // button1
             // 
+            button1.BackColor = Color.FromArgb(26, 17, 55);
             button1.FlatAppearance.BorderSize = 0;
             button1.FlatAppearance.MouseDownBackColor = Color.FromArgb(128, 128, 255);
             button1.FlatAppearance.MouseOverBackColor = Color.Black;
@@ -337,27 +388,8 @@ namespace budgetApp
             button1.Size = new Size(93, 27);
             button1.TabIndex = 7;
             button1.Text = "Add Expenses";
-            button1.UseVisualStyleBackColor = true;
+            button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
-            // 
-            // panel2
-            // 
-            panel2.Controls.Add(LegendData);
-            panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(0, 120);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(238, 40);
-            panel2.TabIndex = 5;
-            // 
-            // LegendData
-            // 
-            LegendData.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            LegendData.AutoSize = true;
-            LegendData.ForeColor = Color.White;
-            LegendData.Location = new Point(11, 15);
-            LegendData.Name = "LegendData";
-            LegendData.Size = new Size(0, 15);
-            LegendData.TabIndex = 4;
             // 
             // MainForm
             // 
@@ -383,8 +415,6 @@ namespace budgetApp
             LineChartPanel.ResumeLayout(false);
             panel5.ResumeLayout(false);
             PieChartPanel.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -398,11 +428,9 @@ namespace budgetApp
         private Panel panel3;
         private Panel PieChartPanel;
         private Label label1;
-        private Label LegendData;
         private Label label4;
         private Label label3;
         private Label label2;
-        private Panel panel2;
         private Panel panel4;
         private Label label6;
         private Panel panel5;
@@ -418,7 +446,9 @@ namespace budgetApp
         private Button SavingGoals;
         private Button button1;
         private Button AddExpense;
-        private Button button2;
         private Button button3;
+        private Button button2;
+        private Button btnYerMonth;
+        private Button btnLineYer;
     }
 }

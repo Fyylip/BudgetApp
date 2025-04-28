@@ -26,6 +26,10 @@ namespace budgetApp
         private PieChart pieChart;
         private CartesianChart barChartControl;
         private DatabaseHelper _dbHelper;
+        private BarChart barChart;
+        private bool YerFlag = true;
+        private bool WeekFlag = false;
+
 
         //public MainForm(string email)
         //{
@@ -39,6 +43,7 @@ namespace budgetApp
             _userId = userId;
             _dbHelper = new DatabaseHelper();
             InitializeCharts();
+            InitializeSavingGoals();
         }
 
         public MainForm(DatabaseHelper dbHelper, int userId)
@@ -52,6 +57,40 @@ namespace budgetApp
             _userId = userId;
         }
 
+        // To musi byæ oddzielnie bo inaczej siê dodaje z ka¿dym odsie¿eniem
+        // W sumie nie wiem czy teraz musi byæ osobno ale nie ruszaj ju¿ bo dzia³a
+        private void InitializeSavingGoals()
+        {
+            for (int i = BarChartPanel.Controls.Count - 1; i >= 0; i--)
+            {
+                Control control = BarChartPanel.Controls[i];
+                if (control.Tag != null && control.Tag.ToString() == "SavingGoal")
+                {
+                    BarChartPanel.Controls.Remove(control);
+                    control.Dispose();
+                }
+            }
+
+            var chartGenerator = new BarChart(BarChartPanel);
+
+            var savingGoals = _dbHelper.GetSavingChartData(_userId);
+
+            foreach (var goal in savingGoals)
+            {
+                int percent = (goal.GoalAmount > 0) ? (int)((goal.HowMuch / goal.GoalAmount) * 100) : 0;
+
+                var panel = chartGenerator.CreateSavingsProgressPanel(goal.Label, percent, Color.Green);
+
+                panel.Tag = "SavingGoal";
+
+                BarChartPanel.Controls.Add(panel);
+
+                if (percent >= 100)
+                {
+                    _dbHelper.DeleteCompletedGoals(_userId);
+                }
+            }
+        }
         private void InitializeCharts()
         {
 
@@ -59,32 +98,20 @@ namespace budgetApp
             var (amounts, categories) = _dbHelper.GetPieChartData(_userId); // Pass the required 'userId' parameter
 
             // Wykres liniowy
-            lineChart = new LineChart(_dbHelper).CreateLineChart(_userId); // Przekazanie _userId
-            lineChart.Dock = DockStyle.Bottom;
-            LineChartPanel.Controls.Add(lineChart);
-            LineChartPanel.Resize += (s, e) => UpdateChartSize(lineChart, LineChartPanel);
-
-            // Oszcêdnoœci
-            var chartGenerator = new BarChart(BarChartPanel);
-
-            // Pobierz dane z bazy danych dla celów oszczêdnoœci
-            var savingGoals = _dbHelper.GetSavingChartData(_userId);
-
-            foreach (var goal in savingGoals)
+            if(YerFlag)
             {
-                // Oblicz procent osi¹gniêcia celu
-                int percent = (goal.GoalAmount > 0) ? (int)((goal.HowMuch / goal.GoalAmount) * 100) : 0;
+                lineChart = new LineChart(_dbHelper).CreateLineChartYear(_userId);
+                lineChart.Dock = DockStyle.Bottom;
+                LineChartPanel.Controls.Add(lineChart);
+                LineChartPanel.Resize += (s, e) => UpdateChartSize(lineChart, LineChartPanel);
+            }
 
-                // Twórz panel postêpu dla ka¿dego celu
-                var panel = chartGenerator.CreateSavingsProgressPanel(goal.Label, percent, Color.Green);
-
-                // Dodaj panel do kontenera
-                BarChartPanel.Controls.Add(panel);
-
-                if (percent >= 100)
-                {
-                    _dbHelper.DeleteCompletedGoals(_userId);
-                }
+            else if (WeekFlag)
+            {
+                lineChart = new LineChart(_dbHelper).CreateLineChartWeek(_userId);
+                lineChart.Dock = DockStyle.Bottom;
+                LineChartPanel.Controls.Add(lineChart);
+                LineChartPanel.Resize += (s, e) => UpdateChartSize(lineChart, LineChartPanel);
             }
 
             // Wykres ko³owy
@@ -102,24 +129,6 @@ namespace budgetApp
             LoadAddictions();
             UpdateTotalLabel();
         }
-
-
-        private BarChart barChart;
-
-        //private void LoadPieChartData()
-        //{
-        //    DatabaseHelper dbHelper = new DatabaseHelper();
-
-        //    // Przekazujemy userId, zak³adaj¹c, ¿e masz tê zmienn¹ w MainForm
-        //    var (amounts, categories) = dbHelper.GetPieChartData(_userId);
-
-        //    // Przyk³ad: U¿ycie danych do wyœwietlenia wykresu
-        //    // Mo¿esz tutaj przypisaæ te dane do wykresu ko³owego
-        //    for (int i = 0; i < categories.Count; i++)
-        //    {
-        //        Console.WriteLine($"Kategoria: {categories[i]}, Kwota: {amounts[i]}");
-        //    }
-        //}
         private void OpenSavingGoalsEdit()
         {
             // Tworzenie instancji SavingGoalsEdit i przekazywanie userId
@@ -159,7 +168,7 @@ namespace budgetApp
                 .Zip(amounts, (category, amount) => (Category: category, Amount: amount))
                 .ToList();
 
-            LegendData.Text = string.Join(" ", pieChartData.Select(data => data.Category));
+            //LegendData.Text = string.Join(" ", pieChartData.Select(data => data.Category));
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -179,7 +188,7 @@ namespace budgetApp
                 "WprowadŸ kwotê",
                 "0"
             );
-
+            // Nie da³em tego do Helpera bo nie dzi³a chuj wie czemu te¿ nie ruszaj
             if (decimal.TryParse(input, out decimal amount) && amount > 0)
             {
                 SqlConnection con = new SqlConnection("Data Source=DESKTOP-IM5HQGK\\SQLEXPRESS;Initial Catalog=LoginApp;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
@@ -192,7 +201,7 @@ namespace budgetApp
                     string checkQuery = "SELECT Value FROM Total WHERE UserId = @UserId AND Label = @Label";
                     SqlCommand checkCmd = new SqlCommand(checkQuery, con);
                     checkCmd.Parameters.AddWithValue("@UserId", _userId);
-                    checkCmd.Parameters.AddWithValue("@Label", "Wykres"); // Zamieñ na odpowiedni¹ etykietê
+                    checkCmd.Parameters.AddWithValue("@Label", "Wykres");
 
                     var existingValue = checkCmd.ExecuteScalar();
 
@@ -219,7 +228,7 @@ namespace budgetApp
                         string insertQuery = "INSERT INTO Total (UserId, Label, Value, Date) VALUES (@UserId, @Label, @Value, @Date)";
                         SqlCommand insertCmd = new SqlCommand(insertQuery, con);
                         insertCmd.Parameters.AddWithValue("@UserId", _userId);
-                        insertCmd.Parameters.AddWithValue("@Label", "Wykres"); // Zamieñ na odpowiedni¹ etykietê
+                        insertCmd.Parameters.AddWithValue("@Label", "Wykres");
                         insertCmd.Parameters.AddWithValue("@Value", amount);
                         insertCmd.Parameters.AddWithValue("@Date", DateTime.Now);
 
@@ -277,7 +286,7 @@ namespace budgetApp
         private void UpdateTotalLabel()
         {
             DatabaseHelper dbHelper = new DatabaseHelper();
-            decimal totalValue = dbHelper.GetTotalValue(_userId, "Wykres"); // U¿yj etykiety, np. "Wykres"
+            decimal totalValue = dbHelper.GetTotalValue(_userId, "Wykres"); // Wykres bo bo tak nie wiem czemu nie ruszaj tego
 
             Total.Text = $"{totalValue}";
 
@@ -285,7 +294,6 @@ namespace budgetApp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            // Pass the required 'userId' parameter to the AddPieChart constructor
             AddPieChart addPieChart = new AddPieChart(_userId);
             addPieChart.FormClosed += (s, args) => InitializeCharts(); // Odœwie¿enie wykresu po zamkniêciu okna
             addPieChart.Show();
@@ -295,7 +303,7 @@ namespace budgetApp
         {
             SavingGoalsAdd addGoalForm = new SavingGoalsAdd(_userId);
             addGoalForm.Show();
-            this.Hide();
+            addGoalForm.FormClosed += (s, args) => InitializeSavingGoals(); // Odœwie¿enie wykresu po zamkniêciu okna
         }
 
         private void AddExpense_Click(object sender, EventArgs e)
@@ -330,9 +338,44 @@ namespace budgetApp
         private void button3_Click(object sender, EventArgs e)
         {
             SavingGoalsEdit editGoalsForm = new SavingGoalsEdit(_userId);
-            editGoalsForm.FormClosed += (s, args) => InitializeCharts(); // Odœwie¿enie danych po zamkniêciu okna
+            editGoalsForm.FormClosed += (s, args) => InitializeSavingGoals(); // Odœwie¿enie danych po zamkniêciu okna
             editGoalsForm.Show();
 
+        }
+        private void btnLineYer_Click(object sender, EventArgs e)
+        {
+            YerFlag = true;
+            WeekFlag = false;
+            RefreshLineChart();
+        }
+
+        private void btnYerMonth_Click(object sender, EventArgs e)
+        {
+            YerFlag = false;
+            WeekFlag = true;
+            RefreshLineChart();
+        }
+        private void RefreshLineChart()
+        {
+            // Usuwasz stary wykres
+            if (lineChart != null)
+            {
+                LineChartPanel.Controls.Remove(lineChart);
+                lineChart.Dispose();
+            }
+
+            // Tworzysz nowy wed³ug flag
+            if (YerFlag)
+                lineChart = new LineChart(_dbHelper).CreateLineChartYear(_userId);
+            else if (WeekFlag)
+                lineChart = new LineChart(_dbHelper).CreateLineChartWeek(_userId);
+
+            if (lineChart != null)
+            {
+                lineChart.Dock = DockStyle.Bottom;
+                LineChartPanel.Controls.Add(lineChart);
+                UpdateChartSize(lineChart, LineChartPanel);
+            }
         }
     }
 }

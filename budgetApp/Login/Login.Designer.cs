@@ -68,7 +68,6 @@
             button2.TabIndex = 1;
             button2.Text = "Clear";
             button2.UseVisualStyleBackColor = true;
-            //button2.Click += button2_Click;
             // 
             // txtUserName
             // 
@@ -76,7 +75,7 @@
             txtUserName.BackColor = Color.FromArgb(24, 15, 47);
             txtUserName.BorderStyle = BorderStyle.None;
             txtUserName.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
-            txtUserName.ForeColor = SystemColors.ActiveCaptionText;
+            txtUserName.ForeColor = Color.White;
             txtUserName.Location = new Point(374, 147);
             txtUserName.Name = "txtUserName";
             txtUserName.PlaceholderText = "Login";
@@ -89,7 +88,7 @@
             txtPassword.BackColor = Color.FromArgb(24, 15, 47);
             txtPassword.BorderStyle = BorderStyle.None;
             txtPassword.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold);
-            txtPassword.ForeColor = SystemColors.ActiveCaptionText;
+            txtPassword.ForeColor = Color.White;
             txtPassword.Location = new Point(375, 195);
             txtPassword.Name = "txtPassword";
             txtPassword.PasswordChar = '*';

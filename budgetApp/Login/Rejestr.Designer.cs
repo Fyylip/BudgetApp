@@ -95,7 +95,7 @@
             txtPassword.BackColor = Color.FromArgb(24, 15, 47);
             txtPassword.BorderStyle = BorderStyle.None;
             txtPassword.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold);
-            txtPassword.ForeColor = SystemColors.ActiveCaptionText;
+            txtPassword.ForeColor = Color.White;
             txtPassword.Location = new Point(319, 212);
             txtPassword.Name = "txtPassword";
             txtPassword.PasswordChar = '*';
@@ -109,7 +109,7 @@
             txtEmail.BackColor = Color.FromArgb(24, 15, 47);
             txtEmail.BorderStyle = BorderStyle.None;
             txtEmail.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
-            txtEmail.ForeColor = SystemColors.ActiveCaptionText;
+            txtEmail.ForeColor = Color.White;
             txtEmail.Location = new Point(319, 150);
             txtEmail.Name = "txtEmail";
             txtEmail.PlaceholderText = "Email";
@@ -164,7 +164,7 @@
             txtPassword2.BackColor = Color.FromArgb(24, 15, 47);
             txtPassword2.BorderStyle = BorderStyle.None;
             txtPassword2.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold);
-            txtPassword2.ForeColor = SystemColors.ActiveCaptionText;
+            txtPassword2.ForeColor = Color.White;
             txtPassword2.Location = new Point(320, 267);
             txtPassword2.Name = "txtPassword2";
             txtPassword2.PasswordChar = '*';

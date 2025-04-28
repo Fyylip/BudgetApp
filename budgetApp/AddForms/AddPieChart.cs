@@ -28,7 +28,7 @@ namespace budgetApp
             else if (radioPleasures.Checked)
                 return "Pleasures";
             else
-                return string.Empty; // Zwracamy pusty ciąg, gdy żadna kategoria nie jest wybrana
+                return string.Empty;
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
@@ -48,21 +48,18 @@ namespace budgetApp
 
             try
             {
-                _dbHelper.UpdateTotalRecord(_userId, amount); // Moved here to ensure 'amount' is defined
+                _dbHelper.UpdateTotalRecord(_userId, amount);
                 if (_dbHelper.RecordExists(_userId, category))
                 {
-                    // Jeśli rekord istnieje, zaktualizuj go
                     _dbHelper.UpdateRecord(_userId, category, amount);
-                    MessageBox.Show("Kwota zaktualizowana w wykresie kołowym!");
+                    //MessageBox.Show("Kwota zaktualizowana w wykresie kołowym!");
                     this.Close();
-                    MainForm mainForm = new MainForm(_userId);
-                    mainForm.Show();
                 }
                 else
                 {
                     // Jeśli rekord nie istnieje, dodaj nowy
                     _dbHelper.InsertRecord(_userId, category, amount);
-                    MessageBox.Show("Dane dodane do wykresu kołowego!");
+                    //MessageBox.Show("Dane dodane do wykresu kołowego!");
                 }
             }
             catch (Exception ex)
