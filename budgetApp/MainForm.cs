@@ -11,9 +11,7 @@ using ViewModelsSamples.Pies.Basic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using System.Data.SqlClient;
 using budgetApp.DataBase;
-using System.Windows.Forms.DataVisualization.Charting;
-using Microsoft.VisualBasic.ApplicationServices;
-using System.Drawing;
+
 
 
 namespace budgetApp
